@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!--Definindo a versão HTML 5-->
+
+<html lang="pt-br"> <!--Definindo o idioma para português do Brasil-->
+
+<head> <!--A cabeça da página-->
+    <meta charset="UTF-8">
+    <title>Site AJAX</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/site_AJAX.css">
+    <script type="text/javascript" src="/javascript/site_AJAX.js" ></script>
+</head>
+
+<body> <!--O corpo da página, onde tem todo o conteúdo-->
+
+    <form name="menu">
+        <select name="usuario" id="usuario"> <!--, onclick="atualizar_menu()"-->
+            <option value="-1" disabled="true" selected="true">
+                Selecione um usuário</option>
+        </select>
+
+        <p name="opcoes" id="opcoes">
+            <input class="radios"type="radio" name="filtros" id="2" value="User Posts" onclick="atualizar_filtro()">
+            <label class="radios" for="2">User Posts</label> <br>
+            <input class="radios" type="radio" name="filtros" id="3" value="User TODOs" onclick="atualizar_filtro()">
+            <label class="radios" for="3">User TODOs</label> <br>
+        </p>
+
+        <p name="sub-opcoes" id="sub-opcoes" style="visibility: hidden;">
+            <input class="radios"type="radio" name="sub-filtros" id="4" checked=true value="Todas as Tarefas">
+            <label class="radios" for="4">Todas as Tarefas</label> <br>
+            <input class="radios" type="radio" name="sub-filtros" id="5" value="Tarefas Finalizadas">
+            <label class="radios" for="5">Tarefas Finalizadas</label> <br>
+            <input class="radios" type="radio" name="sub-filtros" id="6" value="Tarefas Não Finalizadas">
+            <label class="radios" for="6">Tarefas Não Finalizadas</label> <br>
+            <br>
+
+        </p>
+        
+    </form>
+    <div id="tela">
+        <h1 id="titulo">
+
+        </h1>
+
+        <ul id="lista">
+
+        </ul>
+    </div>
+
+    <script>
+        var id_usuario_selecionado;
+        // Atualizar dinamicamente o objeto SELECT atraves do AJAX, logo após a pagina ser carregada
+        $(window).on("load", function(){
+        // página totalmente carregada (DOM, imagens etc.)
+            atualizar_menu();
+         });
+    
+        // Capturar o ID do usuario selecionado, é chamada assim que um NOME é escolhido no SELECT
+        document.getElementById('usuario').addEventListener("change", function(){
+            var id_selecionado = document.getElementById("usuario").options.selectedIndex;
+            //console.log("id selecionado = " + id_selecionado);
+            //buscar_usuario(id_selecionado);
+            id_usuario_selecionado = id_selecionado;
+            limpar_tela(); // Limpando a tela para imprimir as informacoes do novo usuário selecionado
+            atualizar_filtro(); // Atualizar os dados através do filtro selecionado
+        })
+        
+        function atualizar_filtro(){
+            var radios = document.getElementsByName("filtros");
+            var id_radio_escolhido;
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    id_radio_escolhido = radios[i].id;
+                    console.log("Escolheu: " + radios[i].value);
+                }
+            }
+            limpar_tela();
+            atualizar_tela(id_usuario_selecionado, id_radio_escolhido);
+        }
+    </script>
+
+</body>
+
+</html>
