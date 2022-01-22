@@ -1,6 +1,50 @@
 @charset "UTF-8";
 
+/*
+*   Author: Igor Silva Bento
+*/
 
-h1{
-    background-color: aqua;
+body{
+    text-align: center;
+}
+
+#opcoes{
+    font-weight: bold;
+}
+
+#usuario{
+    margin: auto;
+    background-color: whitesmoke;
+}
+
+#opcoes{
+    text-align:left;
+    width: 20%;
+    margin: auto;
+    margin-left: 44.5%;
+}
+
+#sub-opcoes{
+    text-align:left;
+    width: 20%;
+    margin: auto;
+    margin-left: 45%;
+}
+
+#lista{
+    width: 50%;
+    margin: auto;
+    font-size: medium;
+
+}
+
+li{
+    text-align: justify;
+}
+
+#titulo{
+    font-weight: bolder;
+    color:rgb(255, 255, 255);
+    background-color:rgb(187, 193, 199);
+    
 }

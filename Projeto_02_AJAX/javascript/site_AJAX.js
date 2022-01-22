@@ -1,4 +1,9 @@
 /*
+*   Author: Igor Silva Bento
+*/
+
+
+/*
  * Função AJAX base do tipo assíncrona.
  * type é o tipo de objeto que você quer recuperar.
  * value é o valor do parâmetro para filtrar os resultados dos tipos 2, 3 e 4.
@@ -32,63 +37,75 @@ function xhttpAssincrono(callBackFunction, type, value) {
     xhttp.send();
 }
 
-function mostrar_filtros_todos(){
-    let opcoes = document.getElementById("sub-opcoes");
-    opcoes.style.visibility = "visible";
 
-   /* let novoRadio = document.createElement('input');
-    novoRadio.setAttribute("type", "radio");
-    novoRadio.setAttribute("name", "sub-filtros");
-    novoRadio.setAttribute("value", "Todas as tarefas");
-    novoRadio.setAttribute("id", "4");
-    let novoLabel = document.createElement('label');
-    novoLabel.setAttribute("for", "4");
-    novoLabel.textContent = "Todas as tarefas";
-    opcoes.appendChild(novoRadio);
-    opcoes.appendChild(novoLabel);
+// Atualiza o texto exibido de acordo com o Filtro selecionado
+function atualizar_tela(id_usuario, id_filtro){
+    switch (id_filtro){
+        // Filtro User Posts
+        case '2':
+            limpar_filtros_todos();
+            xhttpAssincrono(atualizar_tela_post, 2, id_usuario);
+            break;
+        // Filtro User TODOs
+        case '3':
+            mostrar_filtros_todos();
+            xhttpAssincrono(atualizar_tela_todos, 3, id_usuario);
+            break;
+        // Status Todas as Tarefas
+        case '4':
+            mostrar_filtros_todos();
+            xhttpAssincrono(atualizar_tela_todos, 3, id_usuario);
+            break;
+        // Status Tarefas Finalizadas
+        case '5':
+            mostrar_filtros_todos();
+            xhttpAssincrono(atualizar_tela_todos_finalizadas, 3, id_usuario);
+            break;
+        // Status Tarefas Não Finalizadas
+        case '6':
+            mostrar_filtros_todos();
+            xhttpAssincrono(atualizar_tela_todos_nao_finalizadas, 3, id_usuario);
+            break;
+    }   
+}
+// Variaveis Globais
+var id_usuario_selecionado; // Guarda o ID do usuario selecionado
+var id_radio_escolhido = null; // Guarda o ID do radio selecionado
 
-    var quebra_linha = document.createElement('br');
-    opcoes.appendChild(quebra_linha);
-    
-    novoRadio = document.createElement('input');
-    novoRadio.setAttribute("type", "radio");
-    novoRadio.setAttribute("name", "sub-filtros");
-    novoRadio.setAttribute("value", "Tarefas Finalizadas");
-    novoRadio.setAttribute("id", "5");
-    novoRadio.value = "TESTE";
-    //novoLabel = document.createElement('label');
-    //novoLabel.setAttribute("for", "5");
-    //novoLabel.textContent = "Tarefas Finalizadas";
-    opcoes.appendChild(novoRadio);
-    //opcoes.appendChild(novoLabel);
 
-    var quebra_linha = document.createElement('br');
-    opcoes.appendChild(quebra_linha);
-    
-    novoRadio = document.createElement('input');
-    novoRadio.setAttribute("type", "radio");
-    novoRadio.setAttribute("name", "sub-filtros");
-    novoRadio.setAttribute("value", "Tarefas Não Finalizadas");
-    novoRadio.setAttribute("id", "6");
-    novoLabel = document.createElement('label');
-    novoLabel.setAttribute("for", "6");
-    novoLabel.textContent = "Tarefas Não Finalizadas";
-    opcoes.appendChild(novoRadio);
-    opcoes.appendChild(novoLabel);*/
+// Funcao para atualizar o item Opcoes
+function atualizar_filtro(){
+    var radios = document.getElementsByName("filtros");
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            id_radio_escolhido = radios[i].id;
+            
+            if(radios[i].id == '3'){ // Verifica as sub-opcoes (IDs: 4, 5 e 6)
+                atualizar_status();
+                break;
+            }
+        }
+    }
+    atualizar_tela(id_usuario_selecionado, id_radio_escolhido);
+}
 
+
+// Funcao para atualizar o Status do item Sub-Opcoes
+function atualizar_status(){
+    var radios = document.getElementsByName("sub-filtros");
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                id_radio_escolhido = radios[i].id;
+            }
+        }
+    atualizar_tela(id_usuario_selecionado, id_radio_escolhido);
 
 }
 
-function limpar_filtros_todos(){
-    let item = document.getElementById("sub-opcoes");
-    item.style.visibility = "hidden";
-    /*let item1 = document.getElementsByName("sub-filtros");
-	listagem.removeChild(item1[0]);*/
-}
-// Minhas funcoes:
+
+
+// Atualiza o item Select com o nome dos usuários assim que a página é carregada
 function montar_select(response){
-    //let menu = document.getElementById("usuario");
-    console.log(response);
     let objeto_usuario = JSON.parse(response);
     for(i=0; i<objeto_usuario.length; i++){
         let nome = objeto_usuario[i].name;
@@ -98,30 +115,13 @@ function montar_select(response){
     }
 } 
 
-
-function atualizar_tela(id_usuario, id_filtro){
-    switch (id_filtro){
-        case '2':
-            limpar_filtros_todos();
-            xhttpAssincrono(atualizar_tela_post, 2, id_usuario);
-            break;
-        case '3':
-            mostrar_filtros_todos();
-            xhttpAssincrono(atualizar_tela_todos, 3, id_usuario);
-            break;
-
-    }
-    
-    
-}
-
+// Funcao que exibe todos os itens TODOs
 function atualizar_tela_todos(response){
-    document.getElementById("titulo").innerHTML = "Tarefas do usuário";
+    limpar_tela();
+    document.getElementById("titulo").innerHTML = "Tarefas do Usuário";
 
     let objeto_todos = JSON.parse(response);
-    console.log(objeto_todos);
     let listagem = document.getElementById("lista");
-    //console.log(objeto_todos[20].title);
     for(i=0; i<objeto_todos.length; i++){
         let titulo = objeto_todos[i].title;
         let concluido = objeto_todos[i].completed;
@@ -132,9 +132,51 @@ function atualizar_tela_todos(response){
 
 }
 
+// Funcao que filtra os itens TODOs, apenas os itens com a propriedade "completed" == true
+function atualizar_tela_todos_finalizadas(response){
+    limpar_tela();
+    document.getElementById("titulo").innerHTML = "Tarefas do Usuário";
 
+    let objeto_todos = JSON.parse(response);
+    let listagem = document.getElementById("lista");
+
+    for(i=0; i<objeto_todos.length; i++){
+        let titulo = objeto_todos[i].title;
+        let concluido = objeto_todos[i].completed;
+        if(concluido == true){
+            let novoItem = document.createElement('li');
+            novoItem.innerText = "Concluída: " + concluido + " - " + titulo;
+            listagem.appendChild(novoItem);
+        }
+    }
+}
+
+// Funcao que filtra os itens TODOs, apenas os itens com a propriedade "completed" == false
+function atualizar_tela_todos_nao_finalizadas(response){
+    limpar_tela();
+    document.getElementById("titulo").innerHTML = "Tarefas do Usuário";
+
+    let objeto_todos = JSON.parse(response);
+    let listagem = document.getElementById("lista");
+ 
+    for(i=0; i<objeto_todos.length; i++){
+        let titulo = objeto_todos[i].title;
+        let concluido = objeto_todos[i].completed;
+        if(concluido == false){
+            let novoItem = document.createElement('li');
+            novoItem.innerText = "Concluída: " + concluido + " - " + titulo;
+            listagem.appendChild(novoItem);
+        }
+    }
+}
+
+
+
+
+// Exibe o texto quando o filtro TODOs foi selecionado
 function atualizar_tela_post(response){
-    document.getElementById("titulo").innerHTML = "Posts do usuário";
+    limpar_tela();
+    document.getElementById("titulo").innerHTML = "Posts do Usuário";
     let objeto_post = JSON.parse(response);
     let listagem = document.getElementById("lista");
 
@@ -144,10 +186,9 @@ function atualizar_tela_post(response){
         novoItem.innerText = post;
         listagem.appendChild(novoItem);
     }
-    //console.log(objeto_usuario[0].title);
 }
 
-
+// Apaga o texto da tela, sempre que um novo filtro é selecionado
 function limpar_tela(){
     let listagem = document.getElementById('lista');
 	while(listagem.children.length > 0) {
@@ -155,13 +196,20 @@ function limpar_tela(){
 	}
 }
 
-
-function buscar_usuario(nome){
-    console.log("Selecionado: " + nome);
+// Funcao que recupera o nomes do usuarios
+function atualizar_menu(){
+    xhttpAssincrono(montar_select, 1, null);
 }
 
 
-function atualizar_menu(){
-    console.log("apertou");
-    xhttpAssincrono(montar_select, 1, null);
+// Exibe os filtro de Status do item User TODOs
+function mostrar_filtros_todos(){
+    let opcoes = document.getElementById("sub-opcoes");
+    opcoes.style.visibility = "visible";
+}
+
+// Remove os filtro de Status do item User TODOs
+function limpar_filtros_todos(){
+    let item = document.getElementById("sub-opcoes");
+    item.style.visibility = "hidden";
 }
